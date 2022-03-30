@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsString } from 'class-validator';
 
 export class ProductDto {
   @IsString()
@@ -9,6 +9,9 @@ export class ProductDto {
 
   @IsString()
   price: number;
+
+  @IsString()
+  rating: number;
 
   @IsString()
   description: string;
@@ -23,17 +26,28 @@ export class ProductBodyDto {
   @IsString()
   name: string;
 
-  @IsString()
+  @IsNumber()
   price: number;
+
+  @IsString()
+  imageUrl: string;
 
   @IsString()
   description: string;
 }
 
 export class MessageDto {
-  @IsString()
+  @IsBoolean()
   success: boolean;
 
   @IsString()
   message: string;
+}
+
+export class AllProductsResponseDto extends MessageDto {
+  products: ProductDto[];
+}
+
+export class ProductDetailsResponseDto extends MessageDto {
+  product: ProductDto;
 }

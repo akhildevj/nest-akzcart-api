@@ -1,11 +1,18 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import {
   AllProductsResponseDto,
   MessageDto,
   ProductBodyDto,
   ProductDetailsResponseDto,
-  ProductDto,
   ProductIdDto,
 } from './dto/product.dto';
 import { ProductService } from './product.service';
@@ -31,6 +38,14 @@ export class ProductController {
     @Body() body: ProductBodyDto,
   ): Observable<MessageDto | Record<null, null>> {
     return this.productService.addProduct(body);
+  }
+
+  @Patch(':id')
+  updateProduct(
+    @Param() params: ProductIdDto,
+    @Body() body: ProductBodyDto,
+  ): Observable<MessageDto | Record<null, null>> {
+    return this.productService.updateProduct(params, body);
   }
 
   @Delete(':id')

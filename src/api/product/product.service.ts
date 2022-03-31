@@ -6,6 +6,7 @@ import {
   deleteProductQuery,
   getAllProductsQuery,
   getProductDetailsQuery,
+  updateProductQuery,
 } from './db-queries/product-query';
 import {
   AllProductsResponseDto,
@@ -19,6 +20,8 @@ import {
 const GET_MESSAGE = 'Succesfully fetched data';
 const DELETE_MESSAGE = 'Succesfully deleted';
 const ADD_MESSAGE = 'Succesfully added';
+const UPDATE_MESSAGE = 'Succesfully updated';
+const INVALID_ID = 'Invalid product id';
 
 @Injectable()
 export class ProductService {
@@ -38,7 +41,10 @@ export class ProductService {
     return this.databaseService
       .rawQuery(getProductDetailsQuery, [params.id], ProductDto)
       .pipe(
-        map(([product]) => ({ success: true, message: GET_MESSAGE, product })),
+        map(rows => {
+          if (!rows.length) return { success: false, message: INVALID_ID };
+          return { success: true, message: GET_MESSAGE, product: rows[0] };
+        }),
       );
   }
 
@@ -56,11 +62,37 @@ export class ProductService {
       .pipe(map(() => ({ success: true, message: ADD_MESSAGE })));
   }
 
+  updateProduct(
+    params: ProductIdDto,
+    body: ProductBodyDto,
+  ): Observable<MessageDto | Record<null, null>> {
+    const { id } = params;
+    const { name, price, imageUrl, description } = body;
+
+    return this.databaseService
+      .rawQuery(
+        updateProductQuery,
+        [id, name, price, imageUrl, description],
+        ProductDto,
+      )
+      .pipe(
+        map(rows => {
+          if (!rows.length) return { success: false, message: INVALID_ID };
+          return { success: true, message: UPDATE_MESSAGE };
+        }),
+      );
+  }
+
   removeProduct(
     params: ProductIdDto,
   ): Observable<MessageDto | Record<null, null>> {
     return this.databaseService
       .rawQuery(deleteProductQuery, [params.id], ProductDto)
-      .pipe(map(() => ({ success: true, message: DELETE_MESSAGE })));
+      .pipe(
+        map(rows => {
+          if (!rows.length) return { success: false, message: INVALID_ID };
+          return { success: true, message: DELETE_MESSAGE };
+        }),
+      );
   }
 }

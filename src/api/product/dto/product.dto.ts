@@ -1,8 +1,16 @@
-import { IsBoolean, IsNumber, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsBoolean,
+  IsNumber,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 
 export class ProductDto {
-  @IsString()
-  id: string;
+  @IsNumber()
+  @Type(() => Number)
+  id: number;
 
   @IsString()
   name: string;
@@ -18,8 +26,9 @@ export class ProductDto {
 }
 
 export class ProductIdDto {
-  @IsString()
-  id: string;
+  @IsNumber()
+  @Type(() => Number)
+  id: number;
 }
 
 export class ProductBodyDto {
@@ -45,9 +54,13 @@ export class MessageDto {
 }
 
 export class AllProductsResponseDto extends MessageDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductDto)
   products: ProductDto[];
 }
 
 export class ProductDetailsResponseDto extends MessageDto {
+  @Type(() => ProductDto)
   product: ProductDto;
 }

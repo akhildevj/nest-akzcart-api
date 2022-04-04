@@ -1,27 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
 import { DatabaseService } from 'src/database/database.service';
+import { MessageDto } from 'src/models/message.dto';
+import {
+  ADD_MESSAGE,
+  DELETE_MESSAGE,
+  GET_MESSAGE,
+  INVALID_ID,
+  UPDATE_MESSAGE,
+} from 'src/shared/constants';
 import {
   addProductQuery,
   deleteProductQuery,
   getAllProductsQuery,
   getProductDetailsQuery,
   updateProductQuery,
-} from './db-queries/product-query';
+} from './db-queries/product.query';
 import {
   AllProductsResponseDto,
-  MessageDto,
   ProductBodyDto,
   ProductDetailsResponseDto,
   ProductDto,
   ProductIdDto,
 } from './dto/product.dto';
-
-const GET_MESSAGE = 'Succesfully fetched data';
-const DELETE_MESSAGE = 'Succesfully deleted';
-const ADD_MESSAGE = 'Succesfully added';
-const UPDATE_MESSAGE = 'Succesfully updated';
-const INVALID_ID = 'Invalid product id';
 
 @Injectable()
 export class ProductService {
@@ -42,7 +43,7 @@ export class ProductService {
       .rawQuery(getProductDetailsQuery, [params.id], ProductDto)
       .pipe(
         map(rows => {
-          if (!rows.length) return { success: false, message: INVALID_ID };
+          if (!rows.length) throw new BadRequestException(INVALID_ID);
           return { success: true, message: GET_MESSAGE, product: rows[0] };
         }),
       );
@@ -77,7 +78,7 @@ export class ProductService {
       )
       .pipe(
         map(rows => {
-          if (!rows.length) return { success: false, message: INVALID_ID };
+          if (!rows.length) throw new BadRequestException(INVALID_ID);
           return { success: true, message: UPDATE_MESSAGE };
         }),
       );
@@ -90,7 +91,7 @@ export class ProductService {
       .rawQuery(deleteProductQuery, [params.id], ProductDto)
       .pipe(
         map(rows => {
-          if (!rows.length) return { success: false, message: INVALID_ID };
+          if (!rows.length) throw new BadRequestException(INVALID_ID);
           return { success: true, message: DELETE_MESSAGE };
         }),
       );

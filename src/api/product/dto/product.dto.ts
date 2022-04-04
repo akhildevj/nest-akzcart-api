@@ -1,11 +1,6 @@
 import { Type } from 'class-transformer';
-import {
-  IsArray,
-  IsBoolean,
-  IsNumber,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
+import { IsArray, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { MessageDto } from 'src/models/message.dto';
 
 export class ProductDto {
   @IsNumber()
@@ -17,6 +12,9 @@ export class ProductDto {
 
   @IsString()
   price: number;
+
+  @IsString()
+  imageUrl: string;
 
   @IsString()
   rating: number;
@@ -43,14 +41,6 @@ export class ProductBodyDto {
 
   @IsString()
   description: string;
-}
-
-export class MessageDto {
-  @IsBoolean()
-  success: boolean;
-
-  @IsString()
-  message: string;
 }
 
 export class AllProductsResponseDto extends MessageDto {

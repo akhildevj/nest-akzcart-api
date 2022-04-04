@@ -9,10 +9,10 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
+import { MessageDto } from 'src/models/message.dto';
 import { ValidationPipe } from 'src/pipes/validation.pipe';
 import {
   AllProductsResponseDto,
-  MessageDto,
   ProductBodyDto,
   ProductDetailsResponseDto,
   ProductIdDto,

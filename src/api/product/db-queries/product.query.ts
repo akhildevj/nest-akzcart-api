@@ -1,11 +1,11 @@
 export const getAllProductsQuery = `
-    SELECT id, name, price, rating, description 
+    SELECT id, name, price, rating, image_url, description 
     FROM product WHERE is_deleted = FALSE
     ORDER BY last_updated_at DESC;
 `;
 
 export const getProductDetailsQuery = `
-    SELECT id, name, price, rating, description 
+    SELECT id, name, price, image_url, rating, description 
     FROM product WHERE id = $1;
 `;
 

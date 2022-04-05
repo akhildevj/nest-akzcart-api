@@ -5,6 +5,7 @@ import validationSchema from './config/validation';
 import { DatabaseModule } from './database/database.module';
 import { ProductModule } from './api/product/product.module';
 import { CartModule } from './api/cart/cart.module';
+import { OrderModule } from './api/order/order.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CartModule } from './api/cart/cart.module';
     DatabaseModule,
     ProductModule,
     CartModule,
+    OrderModule,
   ],
 })
 export class AppModule {}

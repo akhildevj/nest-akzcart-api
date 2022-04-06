@@ -25,13 +25,6 @@ export class CartDto {
   quantity: number;
 }
 
-export class UserIdDto {
-  @ApiProperty()
-  @IsNumber()
-  @Type(() => Number)
-  id: number;
-}
-
 export class CartBodyDto {
   @ApiProperty()
   @IsNumber()

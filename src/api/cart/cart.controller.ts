@@ -16,9 +16,10 @@ import {
 } from '@nestjs/swagger';
 import { Observable } from 'rxjs';
 import { MessageDto } from 'src/models/message.dto';
+import { UserIdDto } from 'src/models/user-id.dto';
 import { ValidationPipe } from 'src/pipes/validation.pipe';
 import { CartService } from './cart.service';
-import { UserIdDto, CartResponseDto, CartBodyDto } from './dto/cart.dto';
+import { CartResponseDto, CartBodyDto } from './dto/cart.dto';
 
 @Controller('cart')
 @ApiTags('Cart')

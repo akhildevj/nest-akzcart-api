@@ -17,6 +17,7 @@ import {
 } from '@nestjs/swagger';
 import { Observable } from 'rxjs';
 import { MessageDto } from 'src/models/message.dto';
+import { UserIdDto } from 'src/models/user-id.dto';
 import { ValidationPipe } from 'src/pipes/validation.pipe';
 import {
   AllProductsResponseDto,
@@ -49,15 +50,17 @@ export class ProductController {
     return this.productService.getProductDetails(params);
   }
 
-  @Post()
+  @Post(':id')
   @UsePipes(new ValidationPipe())
   @ApiOperation({ summary: 'Add new product' })
+  @ApiParam({ name: 'id' })
   @ApiBody({ type: ProductBodyDto })
   @ApiResponse({ status: 200, type: MessageDto })
   addProduct(
+    @Param() params: UserIdDto,
     @Body() body: ProductBodyDto,
   ): Observable<MessageDto | Record<null, null>> {
-    return this.productService.addProduct(body);
+    return this.productService.addProduct(params, body);
   }
 
   @Patch(':id')

@@ -1,25 +1,26 @@
 export const getCartQuery = `
-    SELECT cart.id, product.name, product.price,  
-        product.image_url, cart.quantity 
-    FROM cart LEFT JOIN product
-    ON cart.product_id = product.id
-    WHERE cart.user_id = $1;
+    SELECT cart_items.id, products.name, products.price,  
+        products.image_url, cart_items.quantity 
+    FROM cart_items 
+    LEFT JOIN products
+    ON cart_items.product_id = products.id
+    LEFT JOIN cart
+    ON cart_items.cart_id = cart.id
+    WHERE cart.id = (
+        SELECT cart_id FROM users WHERE id = $1
+    );
 `;
 
 export const addToCartQuery = `
-    INSERT INTO cart(user_id, product_id, quantity) 
-    SELECT $1, $2, $3
-    WHERE EXISTS(
-        SELECT 1 FROM user_profile LEFT JOIN product 
-        ON user_profile.id = product.user_id
-        WHERE user_profile.id = $1
-        AND product.id = $2
-    )
-    ON CONFLICT (user_id, product_id) DO UPDATE 
+   	INSERT INTO cart_items(product_id, quantity, cart_id) 
+    SELECT $1, $2, (SELECT cart_id FROM users WHERE id = $3)
+    ON CONFLICT (cart_id, product_id) DO UPDATE 
     SET quantity = EXCLUDED.quantity
     RETURNING 1;
 `;
 
 export const clearCartQuery = `
-    DELETE FROM cart WHERE user_id = $1 RETURNING 1;
+    DELETE FROM cart_items 
+    WHERE cart_id = (SELECT cart_id FROM users WHERE id = $1) 
+    RETURNING 1;
 `;

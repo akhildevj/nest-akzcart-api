@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
 import { DatabaseService } from 'src/database/database.service';
 import { MessageDto } from 'src/models/message.dto';
+import { UserIdDto } from 'src/models/user-id.dto';
 import {
   ADD_MESSAGE,
   DELETE_MESSAGE,
@@ -50,14 +51,16 @@ export class ProductService {
   }
 
   addProduct(
+    params: UserIdDto,
     body: ProductBodyDto,
   ): Observable<MessageDto | Record<null, null>> {
+    const { id } = params;
     const { name, price, imageUrl, description } = body;
 
     return this.databaseService
       .rawQuery(
         addProductQuery,
-        [name, price, imageUrl, description],
+        [name, price, imageUrl, description, id],
         ProductDto,
       )
       .pipe(map(() => ({ success: true, message: ADD_MESSAGE })));

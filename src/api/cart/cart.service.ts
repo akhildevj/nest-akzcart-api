@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
 import { DatabaseService } from 'src/database/database.service';
 import { MessageDto } from 'src/models/message.dto';
+import { UserIdDto } from 'src/models/user-id.dto';
 import {
   DELETE_MESSAGE,
   GET_MESSAGE,
@@ -13,12 +14,7 @@ import {
   clearCartQuery,
   getCartQuery,
 } from './db-queries/cart.query';
-import {
-  CartDto,
-  UserIdDto,
-  CartResponseDto,
-  CartBodyDto,
-} from './dto/cart.dto';
+import { CartDto, CartResponseDto, CartBodyDto } from './dto/cart.dto';
 
 @Injectable()
 export class CartService {
@@ -40,7 +36,7 @@ export class CartService {
     const { productId, quantity } = body;
 
     return this.databaseService
-      .rawQuery(addToCartQuery, [id, productId, quantity], CartDto)
+      .rawQuery(addToCartQuery, [productId, quantity, id], CartDto)
       .pipe(
         map(rows => {
           if (!rows.length) throw new BadRequestException(INVALID_ID);

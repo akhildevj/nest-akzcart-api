@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Get,
   Param,
@@ -7,21 +6,14 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import {
-  ApiBody,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Observable } from 'rxjs';
 import { MessageDto } from 'src/models/message.dto';
+import { UserIdDto } from 'src/models/user-id.dto';
 import {
-  OrderBodyDto,
   OrderResponseDto,
   ParamsDto,
   SingleOrderResponseDto,
-  UserIdDto,
 } from './dto/order.dto';
 import { OrderService } from './order.service';
 
@@ -57,12 +49,10 @@ export class OrderController {
   @UsePipes(new ValidationPipe())
   @ApiOperation({ summary: 'Create a order' })
   @ApiParam({ name: 'id' })
-  @ApiBody({ type: OrderBodyDto })
   @ApiResponse({ status: 200, type: MessageDto })
   createOrder(
     @Param() params: UserIdDto,
-    @Body() body: OrderBodyDto,
   ): Observable<MessageDto | Record<null, null>> {
-    return this.orderService.createOrder(params, body);
+    return this.orderService.createOrder(params);
   }
 }

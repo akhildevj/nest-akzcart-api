@@ -1,32 +1,13 @@
 export const getAllProductsQuery = `
-    SELECT
-        products.id,
-        products.name,
-        products.price,
-        products.image_url, 
-        products.description,
-        SUM(product_ratings.rating)/COUNT(product_ratings.rating) as rating
+    SELECT id, name, price, image_url, description, rating
     FROM products
-    LEFT JOIN product_ratings
-    ON product_ratings.product_id = products.id
     WHERE products.is_deleted = FALSE
-    GROUP BY products.id
     ORDER BY products.last_updated_at DESC;
 `;
 
 export const getProductDetailsQuery = `
-    SELECT
-        products.id,
-        products.name,
-        products.price,
-        products.image_url, 
-        products.description,
-        SUM(product_ratings.rating)/COUNT(product_ratings.rating) as rating
-    FROM products
-    LEFT JOIN product_ratings
-    ON product_ratings.product_id = products.id
-    WHERE products.id = $1
-    GROUP BY products.id;
+    SELECT id, name, price, image_url, description, rating
+    FROM products WHERE products.id = $1;
 `;
 
 export const addProductQuery = `
@@ -46,9 +27,30 @@ export const deleteProductQuery = `
 `;
 
 export const updateproductRatingQuery = `
-    INSERT INTO product_ratings(user_id, product_id, rating)
+    WITH
+    user_rating_exists AS (
+        SELECT rating FROM product_ratings
+        WHERE user_id = $1 AND product_id = $2
+    ),
+    user_rating_count AS (
+        SELECT COUNT(rating) AS count 
+        FROM product_ratings WHERE product_id = $2
+    ),
+    update_product_rating AS (
+        UPDATE products SET rating = (
+            CASE WHEN (SELECT COUNT(*) FROM user_rating_exists) > 0 
+            THEN (((
+                SELECT COALESCE(SUM(rating), 0) 
+                FROM product_ratings WHERE user_id != $1) 
+                + $3 )
+                / (SELECT count FROM user_rating_count)
+            )
+            ELSE ((rating + $3) / ((SELECT count FROM user_rating_count) + 1))
+            END
+        ) WHERE productS.id = $2
+    )
+    INSERT INTO product_ratings(user_id, product_id, rating) 
     VALUES ($1, $2, $3)
-    ON CONFLICT(user_id, product_id)
-    DO UPDATE SET rating = EXCLUDED.rating
-    RETURNING 1
+    ON CONFLICT(user_id, product_id) 
+    DO UPDATE SET rating = EXCLUDED.rating RETURNING 1
 `;

@@ -68,3 +68,13 @@ export class ProductDetailsResponseDto extends MessageDto {
   @Type(() => ProductDto)
   product: ProductDto;
 }
+
+export class productRatingBodyDto {
+  @ApiProperty()
+  @IsNumber()
+  productId: number;
+
+  @ApiProperty()
+  @IsNumber()
+  rating: number;
+}

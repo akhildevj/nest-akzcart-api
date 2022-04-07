@@ -24,6 +24,7 @@ import {
   ProductBodyDto,
   ProductDetailsResponseDto,
   ProductIdDto,
+  productRatingBodyDto,
 } from './dto/product.dto';
 import { ProductService } from './product.service';
 
@@ -85,5 +86,18 @@ export class ProductController {
     @Param() params: ProductIdDto,
   ): Observable<MessageDto | Record<null, null>> {
     return this.productService.removeProduct(params);
+  }
+
+  @Patch('rating/:id')
+  @UsePipes(new ValidationPipe())
+  @ApiOperation({ summary: 'Update a product' })
+  @ApiParam({ name: 'id' })
+  @ApiBody({ type: productRatingBodyDto })
+  @ApiResponse({ status: 200, type: MessageDto })
+  updateProductRating(
+    @Param() params: UserIdDto,
+    @Body() body: productRatingBodyDto,
+  ): Observable<MessageDto | Record<null, null>> {
+    return this.productService.updateProductRating(params, body);
   }
 }

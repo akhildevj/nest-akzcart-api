@@ -1,12 +1,32 @@
 export const getAllProductsQuery = `
-    SELECT id, name, price, rating, image_url, description 
-    FROM products WHERE is_deleted = FALSE
-    ORDER BY last_updated_at DESC;
+    SELECT
+        products.id,
+        products.name,
+        products.price,
+        products.image_url, 
+        products.description,
+        SUM(product_ratings.rating)/COUNT(product_ratings.rating) as rating
+    FROM products
+    LEFT JOIN product_ratings
+    ON product_ratings.product_id = products.id
+    WHERE products.is_deleted = FALSE
+    GROUP BY products.id
+    ORDER BY products.last_updated_at DESC;
 `;
 
 export const getProductDetailsQuery = `
-    SELECT id, name, price, image_url, rating, description 
-    FROM products WHERE id = $1;
+    SELECT
+        products.id,
+        products.name,
+        products.price,
+        products.image_url, 
+        products.description,
+        SUM(product_ratings.rating)/COUNT(product_ratings.rating) as rating
+    FROM products
+    LEFT JOIN product_ratings
+    ON product_ratings.product_id = products.id
+    WHERE products.id = $1
+    GROUP BY products.id;
 `;
 
 export const addProductQuery = `
@@ -23,4 +43,12 @@ export const updateProductQuery = `
 export const deleteProductQuery = `
     UPDATE products SET is_deleted = TRUE 
     WHERE id = $1 AND is_deleted = FALSE RETURNING 1;
+`;
+
+export const updateproductRatingQuery = `
+    INSERT INTO product_ratings(user_id, product_id, rating)
+    VALUES ($1, $2, $3)
+    ON CONFLICT(user_id, product_id)
+    DO UPDATE SET rating = EXCLUDED.rating
+    RETURNING 1
 `;

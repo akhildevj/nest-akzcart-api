@@ -7,7 +7,12 @@ export const getOrdersQuery = `
 		JSON_BUILD_OBJECT(
 			'name', products.name,
             'price', products.price,
-            'quantity', cart_items.quantity
+            'quantity', cart_items.quantity,
+			'rating', (
+				SELECT rating FROM product_ratings 
+				WHERE user_id = $1
+				AND product_id = products.id
+			)
 		)
 	) AS cart
     FROM orders
@@ -26,7 +31,12 @@ export const getOrderByIdQuery = `
 		JSON_BUILD_OBJECT(
 			'name', products.name,
             'price', products.price,
-            'quantity', cart_items.quantity
+            'quantity', cart_items.quantity,
+            'rating', (
+				SELECT rating FROM product_ratings 
+				WHERE user_id = $1
+				AND product_id = products.id
+			)
 		)
 	) AS cart
     FROM orders

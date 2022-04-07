@@ -16,6 +16,7 @@ import {
   getAllProductsQuery,
   getProductDetailsQuery,
   updateProductQuery,
+  updateproductRatingQuery,
 } from './db-queries/product.query';
 import {
   AllProductsResponseDto,
@@ -23,6 +24,7 @@ import {
   ProductDetailsResponseDto,
   ProductDto,
   ProductIdDto,
+  productRatingBodyDto,
 } from './dto/product.dto';
 
 @Injectable()
@@ -96,6 +98,23 @@ export class ProductService {
         map(rows => {
           if (!rows.length) throw new BadRequestException(INVALID_ID);
           return { success: true, message: DELETE_MESSAGE };
+        }),
+      );
+  }
+
+  updateProductRating(
+    params: ProductIdDto,
+    body: productRatingBodyDto,
+  ): Observable<MessageDto | Record<null, null>> {
+    const { id } = params;
+    const { productId, rating } = body;
+
+    return this.databaseService
+      .rawQuery(updateproductRatingQuery, [id, productId, rating], ProductDto)
+      .pipe(
+        map(rows => {
+          if (!rows.length) throw new BadRequestException(INVALID_ID);
+          return { success: true, message: UPDATE_MESSAGE };
         }),
       );
   }

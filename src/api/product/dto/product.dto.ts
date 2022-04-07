@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import { IsArray, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { MessageDto } from 'src/models/message.dto';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserIdDto } from 'src/models/user-id.dto';
 
 export class ProductDto {
   @ApiProperty()
@@ -35,6 +36,13 @@ export class ProductIdDto {
   @IsNumber()
   @Type(() => Number)
   id: number;
+}
+
+export class ParamsDto extends UserIdDto {
+  @ApiProperty()
+  @IsNumber()
+  @Type(() => Number)
+  productId: number;
 }
 
 export class ProductBodyDto {

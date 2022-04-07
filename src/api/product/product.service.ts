@@ -12,14 +12,18 @@ import {
 } from 'src/shared/constants';
 import {
   addProductQuery,
+  addToFavouritesQuery,
   deleteProductQuery,
   getAllProductsQuery,
+  getFavouriteProductsQuery,
   getProductDetailsQuery,
+  removeFromFavouritesQuery,
   updateProductQuery,
   updateproductRatingQuery,
 } from './db-queries/product.query';
 import {
   AllProductsResponseDto,
+  ParamsDto,
   ProductBodyDto,
   ProductDetailsResponseDto,
   ProductDto,
@@ -115,6 +119,48 @@ export class ProductService {
         map(rows => {
           if (!rows.length) throw new BadRequestException(INVALID_ID);
           return { success: true, message: UPDATE_MESSAGE };
+        }),
+      );
+  }
+
+  getFavouriteProducts(
+    params: UserIdDto,
+  ): Observable<MessageDto | Record<null, null>> {
+    const { id } = params;
+
+    return this.databaseService
+      .rawQuery(getFavouriteProductsQuery, [id], ProductDto)
+      .pipe(
+        map(products => ({ success: true, message: ADD_MESSAGE, products })),
+      );
+  }
+
+  addToFavourites(
+    params: ParamsDto,
+  ): Observable<MessageDto | Record<null, null>> {
+    const { id, productId } = params;
+
+    return this.databaseService
+      .rawQuery(addToFavouritesQuery, [id, productId], ProductDto)
+      .pipe(
+        map(rows => {
+          if (!rows.length) throw new BadRequestException(INVALID_ID);
+          return { success: true, message: ADD_MESSAGE };
+        }),
+      );
+  }
+
+  removeFromFavourites(
+    params: ParamsDto,
+  ): Observable<MessageDto | Record<null, null>> {
+    const { id, productId } = params;
+
+    return this.databaseService
+      .rawQuery(removeFromFavouritesQuery, [id, productId], ProductDto)
+      .pipe(
+        map(rows => {
+          if (!rows.length) throw new BadRequestException(INVALID_ID);
+          return { success: true, message: DELETE_MESSAGE };
         }),
       );
   }

@@ -21,6 +21,7 @@ import { UserIdDto } from 'src/models/user-id.dto';
 import { ValidationPipe } from 'src/pipes/validation.pipe';
 import {
   AllProductsResponseDto,
+  ParamsDto,
   ProductBodyDto,
   ProductDetailsResponseDto,
   ProductIdDto,
@@ -99,5 +100,40 @@ export class ProductController {
     @Body() body: productRatingBodyDto,
   ): Observable<MessageDto | Record<null, null>> {
     return this.productService.updateProductRating(params, body);
+  }
+
+  @Get('favourites/:id')
+  @UsePipes(new ValidationPipe())
+  @ApiOperation({ summary: 'Add product to favourites' })
+  @ApiParam({ name: 'id' })
+  @ApiResponse({ status: 200, type: MessageDto })
+  getFavouriteProducts(
+    @Param() params: UserIdDto,
+  ): Observable<MessageDto | Record<null, null>> {
+    return this.productService.getFavouriteProducts(params);
+  }
+
+  @Post('favourites/:id/:productId')
+  @UsePipes(new ValidationPipe())
+  @ApiOperation({ summary: 'Add product to favourites' })
+  @ApiParam({ name: 'id' })
+  @ApiParam({ name: 'productId' })
+  @ApiResponse({ status: 200, type: MessageDto })
+  addToFavourites(
+    @Param() params: ParamsDto,
+  ): Observable<MessageDto | Record<null, null>> {
+    return this.productService.addToFavourites(params);
+  }
+
+  @Delete('favourites/:id/:productId')
+  @UsePipes(new ValidationPipe())
+  @ApiOperation({ summary: 'Remove product from favourites' })
+  @ApiParam({ name: 'id' })
+  @ApiParam({ name: 'productId' })
+  @ApiResponse({ status: 200, type: MessageDto })
+  removeFromFavourites(
+    @Param() params: ParamsDto,
+  ): Observable<MessageDto | Record<null, null>> {
+    return this.productService.removeFromFavourites(params);
   }
 }

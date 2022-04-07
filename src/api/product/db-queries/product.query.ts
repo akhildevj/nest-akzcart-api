@@ -54,3 +54,32 @@ export const updateproductRatingQuery = `
     ON CONFLICT(user_id, product_id) 
     DO UPDATE SET rating = EXCLUDED.rating RETURNING 1
 `;
+
+export const getFavouriteProductsQuery = `
+    SELECT 
+        products.id, 
+        products.name, 
+        products.price, 
+        products.image_url, 
+        products.description, 
+        products.rating
+    FROM favourites
+    LEFT JOIN products 
+    ON favourites.product_id = products.id
+    WHERE products.is_deleted = FALSE 
+    AND favourites.user_id = $1
+    ORDER BY products.last_updated_at DESC;
+`;
+
+export const addToFavouritesQuery = `
+    INSERT INTO favourites (user_id, product_id)
+    VALUES ($1, $2)
+    ON CONFLICT DO NOTHING
+    RETURNING 1;
+`;
+
+export const removeFromFavouritesQuery = `
+    DELETE FROM favourites 
+    WHERE user_id= $1 AND product_id = $2  
+    RETURNING 1;
+`;

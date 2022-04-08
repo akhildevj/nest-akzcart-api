@@ -5,8 +5,8 @@ export const getAdminProductsQuery = `
     SELECT 
         id, name, price, image_url, description, 
         rating, created_at, last_updated_at, is_deleted
-    FROM products 
-    WHERE user_id = $1 LIMIT $2 OFFSET $3;
+    FROM products WHERE user_id = $1 
+    ORDER BY last_updated_at DESC LIMIT $2 OFFSET $3;
 `;
 
 export const getProductDetailsQuery = `
@@ -28,6 +28,11 @@ export const updateProductQuery = `
 export const deleteProductQuery = `
     UPDATE products SET is_deleted = TRUE 
     WHERE id = $1 AND is_deleted = FALSE RETURNING 1;
+`;
+
+export const restoreProductQuery = `
+    UPDATE products SET is_deleted = FALSE 
+    WHERE id = $1 AND is_deleted = TRUE RETURNING 1;
 `;
 
 export const updateproductRatingQuery = `

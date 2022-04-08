@@ -10,6 +10,7 @@ import {
   GET_MESSAGE,
   INVALID_ID,
   ORDER,
+  RESTORE_MESSAGE,
   SORT,
   UPDATE_MESSAGE,
 } from 'src/shared/constants';
@@ -22,6 +23,7 @@ import {
   getProductDetailsQuery,
   productSelectQuery,
   removeFromFavouritesQuery,
+  restoreProductQuery,
   updateProductQuery,
   updateproductRatingQuery,
 } from './db-queries/product.query';
@@ -105,13 +107,6 @@ export class ProductService {
     const { id } = params;
     const { limit, offset } = query;
 
-    const queryList = [productSelectQuery];
-    const whereList = ['is_deleted = FALSE'];
-
-    queryList.push(`WHERE ${whereList.join(' AND ')}`);
-
-    queryList.push(`LIMIT ${limit} OFFSET ${offset}`);
-
     return this.databaseService
       .rawQuery(getAdminProductsQuery, [id, limit, offset], ProductDto)
       .pipe(
@@ -178,6 +173,19 @@ export class ProductService {
         map(rows => {
           if (!rows.length) throw new BadRequestException(INVALID_ID);
           return { success: true, message: DELETE_MESSAGE };
+        }),
+      );
+  }
+
+  restoreProduct(
+    params: ProductIdDto,
+  ): Observable<MessageDto | Record<null, null>> {
+    return this.databaseService
+      .rawQuery(restoreProductQuery, [params.id], ProductDto)
+      .pipe(
+        map(rows => {
+          if (!rows.length) throw new BadRequestException(INVALID_ID);
+          return { success: true, message: RESTORE_MESSAGE };
         }),
       );
   }

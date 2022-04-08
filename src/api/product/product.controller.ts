@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   UsePipes,
 } from '@nestjs/common';
@@ -118,6 +119,17 @@ export class ProductController {
     @Param() params: ProductIdDto,
   ): Observable<MessageDto | Record<null, null>> {
     return this.productService.removeProduct(params);
+  }
+
+  @Put(':id')
+  @UsePipes(new ValidationPipe())
+  @ApiOperation({ summary: 'Restore a product' })
+  @ApiParam({ name: 'id' })
+  @ApiResponse({ status: 200, type: MessageDto })
+  restoreProduct(
+    @Param() params: ProductIdDto,
+  ): Observable<MessageDto | Record<null, null>> {
+    return this.productService.restoreProduct(params);
   }
 
   @Patch('rating/:id')

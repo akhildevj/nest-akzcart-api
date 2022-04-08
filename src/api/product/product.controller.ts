@@ -27,6 +27,7 @@ import { ORDER_ENUM, RATING_ENUM, SORT_ENUM } from 'src/shared/constants';
 import {
   AdminProductsResponseDto,
   AllProductsResponseDto,
+  CategoryResponseDto,
   ParamsDto,
   ProductBodyDto,
   ProductDetailsResponseDto,
@@ -49,6 +50,7 @@ export class ProductController {
   @ApiQuery({ name: 'sortBy', required: false, enum: SORT_ENUM })
   @ApiQuery({ name: 'sortOrder', required: false, enum: ORDER_ENUM })
   @ApiQuery({ name: 'search', required: false })
+  @ApiQuery({ name: 'category', required: false })
   @ApiQuery({ name: 'rating', required: false, enum: RATING_ENUM })
   @ApiQuery({ name: 'priceStart', required: false })
   @ApiQuery({ name: 'priceEnd', required: false })
@@ -178,5 +180,13 @@ export class ProductController {
     @Param() params: ParamsDto,
   ): Observable<MessageDto | Record<null, null>> {
     return this.productService.removeFromFavourites(params);
+  }
+
+  @Get('categories')
+  @UsePipes(new ValidationPipe())
+  @ApiOperation({ summary: 'Get all categroies' })
+  @ApiResponse({ status: 200, type: CategoryResponseDto })
+  getCategories(): Observable<CategoryResponseDto | Record<null, null>> {
+    return this.productService.getCategories();
   }
 }

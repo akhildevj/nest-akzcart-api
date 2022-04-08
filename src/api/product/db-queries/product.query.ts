@@ -24,13 +24,14 @@ export const getProductDetailsQuery = `
 `;
 
 export const addProductQuery = `
-    INSERT INTO products (name, price, image_url, description, user_id) 
-    VALUES ($1, $2, $3, $4, $5);
+    INSERT INTO 
+    products (name, price, category, image_url, description, user_id) 
+    VALUES ($1, $2, $3, $4, $5, $6);
 `;
 
 export const updateProductQuery = `
     UPDATE products SET
-    name = $2, price = $3, image_url = $4, description = $5
+    name = $2, price = $3, category= $4, image_url = $5, description = $6
     WHERE id = $1 RETURNING 1;
 `;
 
@@ -101,3 +102,5 @@ export const removeFromFavouritesQuery = `
     WHERE user_id= $1 AND product_id = $2  
     RETURNING 1;
 `;
+
+export const getCategoriesQuery = `SELECT id, name FROM categories;`;

@@ -19,6 +19,7 @@ import {
   addToFavouritesQuery,
   deleteProductQuery,
   getAdminProductsQuery,
+  getCategoriesQuery,
   getFavouriteProductsQuery,
   getProductDetailsQuery,
   getProductsQuery,
@@ -31,6 +32,8 @@ import {
 import {
   AdminProductsResponseDto,
   AllProductsResponseDto,
+  CategoryDto,
+  CategoryResponseDto,
   ParamsDto,
   ProductBodyDto,
   ProductDetailsResponseDto,
@@ -53,6 +56,7 @@ export class ProductService {
       sortBy,
       sortOrder,
       search,
+      category,
       rating,
       priceStart,
       priceEnd,
@@ -62,6 +66,7 @@ export class ProductService {
     const whereList = ['is_deleted = FALSE'];
 
     if (search) whereList.push(`name LIKE '%${search}%'`);
+    if (category) whereList.push(`category = ${category}`);
     if (rating) whereList.push(`rating >=${rating}`);
     if (priceStart) whereList.push(`price >=${priceStart}`);
     if (priceEnd) whereList.push(`price <=${priceEnd}`);
@@ -139,12 +144,12 @@ export class ProductService {
     body: ProductBodyDto,
   ): Observable<MessageDto | Record<null, null>> {
     const { id } = params;
-    const { name, price, imageUrl, description } = body;
+    const { name, price, category, imageUrl, description } = body;
 
     return this.databaseService
       .rawQuery(
         addProductQuery,
-        [name, price, imageUrl, description, id],
+        [name, price, category, imageUrl, description, id],
         ProductDto,
       )
       .pipe(map(() => ({ success: true, message: ADD_MESSAGE })));
@@ -155,12 +160,12 @@ export class ProductService {
     body: ProductBodyDto,
   ): Observable<MessageDto | Record<null, null>> {
     const { id } = params;
-    const { name, price, imageUrl, description } = body;
+    const { name, price, category, imageUrl, description } = body;
 
     return this.databaseService
       .rawQuery(
         updateProductQuery,
-        [id, name, price, imageUrl, description],
+        [id, name, price, category, imageUrl, description],
         ProductDto,
       )
       .pipe(
@@ -253,6 +258,14 @@ export class ProductService {
           if (!rows.length) throw new BadRequestException(INVALID_ID);
           return { success: true, message: DELETE_MESSAGE };
         }),
+      );
+  }
+
+  getCategories(): Observable<CategoryResponseDto | Record<null, null>> {
+    return this.databaseService
+      .rawQuery(getCategoriesQuery, [], CategoryDto)
+      .pipe(
+        map(products => ({ success: true, message: GET_MESSAGE, products })),
       );
   }
 }

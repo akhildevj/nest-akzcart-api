@@ -79,6 +79,12 @@ export class ProductQueryDto extends PaginationDto {
   @ApiProperty()
   @IsNumber()
   @Type(() => Number)
+  @IsOptional()
+  category?: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @Type(() => Number)
   @IsIn(RATING_ENUM)
   @IsOptional()
   rating?: number = 0;
@@ -119,6 +125,10 @@ export class ProductBodyDto {
   @ApiProperty()
   @IsNumber()
   price: number;
+
+  @ApiProperty()
+  @IsNumber()
+  category: number;
 
   @ApiProperty()
   @IsString()
@@ -169,4 +179,23 @@ export class productRatingBodyDto {
   @ApiProperty()
   @IsNumber()
   rating: number;
+}
+
+export class CategoryDto {
+  @ApiProperty()
+  @IsNumber()
+  @Type(() => Number)
+  id: number;
+
+  @ApiProperty()
+  @IsString()
+  name: string;
+}
+
+export class CategoryResponseDto extends MessageDto {
+  @ApiProperty({ type: [CategoryDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CategoryDto)
+  categories: CategoryDto[];
 }

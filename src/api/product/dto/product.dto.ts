@@ -130,6 +130,16 @@ export class ProductBodyDto {
 }
 
 export class AllProductsResponseDto extends MessageDto {
+  @ApiProperty()
+  @IsNumber()
+  @Type(() => Number)
+  totalCount: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @Type(() => Number)
+  maxPrice: number;
+
   @ApiProperty({ type: [ProductDto] })
   @IsArray()
   @ValidateNested({ each: true })

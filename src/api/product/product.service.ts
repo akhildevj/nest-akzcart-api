@@ -21,6 +21,7 @@ import {
   getAdminProductsQuery,
   getFavouriteProductsQuery,
   getProductDetailsQuery,
+  getProductsQuery,
   productSelectQuery,
   removeFromFavouritesQuery,
   restoreProductQuery,
@@ -94,9 +95,15 @@ export class ProductService {
     queryList.push(`LIMIT ${limit} OFFSET ${offset}`);
 
     return this.databaseService
-      .rawQuery(queryList.join(' '), [], ProductDto)
+      .rawQuery(getProductsQuery(queryList.join(' ')), [], ProductDto)
       .pipe(
-        map(products => ({ success: true, message: GET_MESSAGE, products })),
+        map(([rows]) => ({
+          success: true,
+          message: GET_MESSAGE,
+          totalCount: rows.totalcount,
+          maxPrice: rows.maxprice,
+          products: rows.products,
+        })),
       );
   }
 

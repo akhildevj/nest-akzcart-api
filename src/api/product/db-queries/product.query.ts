@@ -1,6 +1,15 @@
 export const productSelectQuery =
   'SELECT id, name, price, image_url, description, rating FROM products';
 
+export const getProductsQuery = (query: string) => {
+  return `
+    SELECT
+        (SELECT COUNT(id) FROM (${query}) pc)::int as totalcount,
+        MAX(price) as maxprice,
+        (SELECT json_agg(row_to_json(pt)) FROM (${query}) pt) AS products
+    FROM products;`;
+};
+
 export const getAdminProductsQuery = `
     SELECT 
         id, name, price, image_url, description, 

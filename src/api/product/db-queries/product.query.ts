@@ -1,9 +1,5 @@
-export const getAllProductsQuery = `
-    SELECT id, name, price, image_url, description, rating
-    FROM products
-    WHERE products.is_deleted = FALSE
-    ORDER BY products.last_updated_at DESC;
-`;
+export const productSelectQuery =
+  'SELECT id, name, price, image_url, description, rating FROM products';
 
 export const getProductDetailsQuery = `
     SELECT id, name, price, image_url, description, rating

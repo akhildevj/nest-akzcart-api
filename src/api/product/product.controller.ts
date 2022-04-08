@@ -6,12 +6,14 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UsePipes,
 } from '@nestjs/common';
 import {
   ApiBody,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -19,12 +21,14 @@ import { Observable } from 'rxjs';
 import { MessageDto } from 'src/models/message.dto';
 import { UserIdDto } from 'src/models/user-id.dto';
 import { ValidationPipe } from 'src/pipes/validation.pipe';
+import { ORDER_ENUM, RATING_ENUM, SORT, SORT_ENUM } from 'src/shared/constants';
 import {
   AllProductsResponseDto,
   ParamsDto,
   ProductBodyDto,
   ProductDetailsResponseDto,
   ProductIdDto,
+  ProductQueryDto,
   productRatingBodyDto,
 } from './dto/product.dto';
 import { ProductService } from './product.service';
@@ -35,10 +39,21 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get()
+  @UsePipes(new ValidationPipe())
   @ApiOperation({ summary: 'Get all products' })
+  @ApiQuery({ name: 'limit', required: false })
+  @ApiQuery({ name: 'offset', required: false })
+  @ApiQuery({ name: 'sortBy', required: false, enum: SORT_ENUM })
+  @ApiQuery({ name: 'sortOrder', required: false, enum: ORDER_ENUM })
+  @ApiQuery({ name: 'search', required: false })
+  @ApiQuery({ name: 'rating', required: false, enum: RATING_ENUM })
+  @ApiQuery({ name: 'priceStart', required: false })
+  @ApiQuery({ name: 'priceEnd', required: false })
   @ApiResponse({ status: 200, type: AllProductsResponseDto })
-  getProducts(): Observable<AllProductsResponseDto[] | Record<null, null>> {
-    return this.productService.getProducts();
+  getProducts(
+    @Query() query: ProductQueryDto,
+  ): Observable<AllProductsResponseDto[] | Record<null, null>> {
+    return this.productService.getProducts(query);
   }
 
   @Get(':id')

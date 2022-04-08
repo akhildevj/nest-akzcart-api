@@ -8,15 +8,17 @@ import {
   DELETE_MESSAGE,
   GET_MESSAGE,
   INVALID_ID,
+  ORDER,
+  SORT,
   UPDATE_MESSAGE,
 } from 'src/shared/constants';
 import {
   addProductQuery,
   addToFavouritesQuery,
   deleteProductQuery,
-  getAllProductsQuery,
   getFavouriteProductsQuery,
   getProductDetailsQuery,
+  productSelectQuery,
   removeFromFavouritesQuery,
   updateProductQuery,
   updateproductRatingQuery,
@@ -28,6 +30,7 @@ import {
   ProductDetailsResponseDto,
   ProductDto,
   ProductIdDto,
+  ProductQueryDto,
   productRatingBodyDto,
 } from './dto/product.dto';
 
@@ -35,9 +38,58 @@ import {
 export class ProductService {
   constructor(private readonly databaseService: DatabaseService<any>) {}
 
-  getProducts(): Observable<AllProductsResponseDto | Record<null, null>> {
+  getProducts(
+    query: ProductQueryDto,
+  ): Observable<AllProductsResponseDto | Record<null, null>> {
+    const {
+      limit,
+      offset,
+      sortBy,
+      sortOrder,
+      search,
+      rating,
+      priceStart,
+      priceEnd,
+    } = query;
+
+    const queryList = [productSelectQuery];
+    const whereList = [];
+
+    if (search) whereList.push(`name LIKE '%${search}%'`);
+    if (rating) whereList.push(`rating >=${rating}`);
+    if (priceStart) whereList.push(`price >=${priceStart}`);
+    if (priceEnd) whereList.push(`price <=${priceEnd}`);
+
+    if (whereList.length) queryList.push(`WHERE ${whereList.join(' AND ')}`);
+
+    if (sortBy && sortOrder) {
+      let sort: string;
+      switch (sortBy) {
+        case SORT.RATING: {
+          sort = SORT.RATING_TEXT;
+          break;
+        }
+        case SORT.PRICE: {
+          sort = SORT.PRICE_TEXT;
+          break;
+        }
+        default: {
+          sort = SORT.TIME_TEXT;
+          break;
+        }
+      }
+      queryList.push(
+        `ORDER BY ${sort} ${
+          sortOrder === ORDER.DESCENDING
+            ? ORDER.DESCENDING_TEXT
+            : ORDER.ASCENDING_TEXT
+        }`,
+      );
+    }
+    queryList.push(`LIMIT ${limit} OFFSET ${offset}`);
+
     return this.databaseService
-      .rawQuery(getAllProductsQuery, [], ProductDto)
+      .rawQuery(queryList.join(' '), [], ProductDto)
       .pipe(
         map(products => ({ success: true, message: GET_MESSAGE, products })),
       );

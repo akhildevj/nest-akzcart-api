@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
 import { DatabaseService } from 'src/database/database.service';
 import { MessageDto } from 'src/models/message.dto';
+import { PaginationDto } from 'src/models/pagination.dto';
 import { UserIdDto } from 'src/models/user-id.dto';
 import {
   ADD_MESSAGE,
@@ -16,6 +17,7 @@ import {
   addProductQuery,
   addToFavouritesQuery,
   deleteProductQuery,
+  getAdminProductsQuery,
   getFavouriteProductsQuery,
   getProductDetailsQuery,
   productSelectQuery,
@@ -24,6 +26,7 @@ import {
   updateproductRatingQuery,
 } from './db-queries/product.query';
 import {
+  AdminProductsResponseDto,
   AllProductsResponseDto,
   ParamsDto,
   ProductBodyDto,
@@ -53,14 +56,14 @@ export class ProductService {
     } = query;
 
     const queryList = [productSelectQuery];
-    const whereList = [];
+    const whereList = ['is_deleted = FALSE'];
 
     if (search) whereList.push(`name LIKE '%${search}%'`);
     if (rating) whereList.push(`rating >=${rating}`);
     if (priceStart) whereList.push(`price >=${priceStart}`);
     if (priceEnd) whereList.push(`price <=${priceEnd}`);
 
-    if (whereList.length) queryList.push(`WHERE ${whereList.join(' AND ')}`);
+    queryList.push(`WHERE ${whereList.join(' AND ')}`);
 
     if (sortBy && sortOrder) {
       let sort: string;
@@ -90,6 +93,27 @@ export class ProductService {
 
     return this.databaseService
       .rawQuery(queryList.join(' '), [], ProductDto)
+      .pipe(
+        map(products => ({ success: true, message: GET_MESSAGE, products })),
+      );
+  }
+
+  getAdminProducts(
+    params: UserIdDto,
+    query: PaginationDto,
+  ): Observable<AdminProductsResponseDto | Record<null, null>> {
+    const { id } = params;
+    const { limit, offset } = query;
+
+    const queryList = [productSelectQuery];
+    const whereList = ['is_deleted = FALSE'];
+
+    queryList.push(`WHERE ${whereList.join(' AND ')}`);
+
+    queryList.push(`LIMIT ${limit} OFFSET ${offset}`);
+
+    return this.databaseService
+      .rawQuery(getAdminProductsQuery, [id, limit, offset], ProductDto)
       .pipe(
         map(products => ({ success: true, message: GET_MESSAGE, products })),
       );

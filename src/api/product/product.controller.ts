@@ -19,10 +19,12 @@ import {
 } from '@nestjs/swagger';
 import { Observable } from 'rxjs';
 import { MessageDto } from 'src/models/message.dto';
+import { PaginationDto } from 'src/models/pagination.dto';
 import { UserIdDto } from 'src/models/user-id.dto';
 import { ValidationPipe } from 'src/pipes/validation.pipe';
-import { ORDER_ENUM, RATING_ENUM, SORT, SORT_ENUM } from 'src/shared/constants';
+import { ORDER_ENUM, RATING_ENUM, SORT_ENUM } from 'src/shared/constants';
 import {
+  AdminProductsResponseDto,
   AllProductsResponseDto,
   ParamsDto,
   ProductBodyDto,
@@ -54,6 +56,20 @@ export class ProductController {
     @Query() query: ProductQueryDto,
   ): Observable<AllProductsResponseDto[] | Record<null, null>> {
     return this.productService.getProducts(query);
+  }
+
+  @Get('admin/:id')
+  @UsePipes(new ValidationPipe())
+  @ApiOperation({ summary: 'Get admin products' })
+  @ApiParam({ name: 'id' })
+  @ApiQuery({ name: 'limit', required: false })
+  @ApiQuery({ name: 'offset', required: false })
+  @ApiResponse({ status: 200, type: AdminProductsResponseDto })
+  getAdminProducts(
+    @Param() params: UserIdDto,
+    @Query() query: PaginationDto,
+  ): Observable<AdminProductsResponseDto[] | Record<null, null>> {
+    return this.productService.getAdminProducts(params, query);
   }
 
   @Get(':id')

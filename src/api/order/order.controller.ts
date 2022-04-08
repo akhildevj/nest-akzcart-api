@@ -3,12 +3,14 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Observable } from 'rxjs';
 import { MessageDto } from 'src/models/message.dto';
+import { PaginationDto } from 'src/models/pagination.dto';
 import { UserIdDto } from 'src/models/user-id.dto';
 import {
   OrderResponseDto,
@@ -29,8 +31,9 @@ export class OrderController {
   @ApiResponse({ status: 200, type: OrderResponseDto })
   getOrders(
     @Param() params: UserIdDto,
+    @Query() query: PaginationDto,
   ): Observable<OrderResponseDto | Record<null, null>> {
-    return this.orderService.getOrders(params);
+    return this.orderService.getOrders(params, query);
   }
 
   @Get(':id/:orderId')

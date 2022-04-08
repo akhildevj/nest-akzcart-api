@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
 import { DatabaseService } from 'src/database/database.service';
 import { MessageDto } from 'src/models/message.dto';
+import { PaginationDto } from 'src/models/pagination.dto';
 import { UserIdDto } from 'src/models/user-id.dto';
 import { ADD_MESSAGE, GET_MESSAGE, INVALID_ID } from 'src/shared/constants';
 import {
@@ -22,11 +23,13 @@ export class OrderService {
 
   getOrders(
     params: UserIdDto,
+    query: PaginationDto,
   ): Observable<OrderResponseDto | Record<null, null>> {
     const { id } = params;
+    const { limit, offset } = query;
 
     return this.databaseService
-      .rawQuery(getOrdersQuery, [id], OrderDto)
+      .rawQuery(getOrdersQuery, [id, limit, offset], OrderDto)
       .pipe(map(orders => ({ success: true, message: GET_MESSAGE, orders })));
   }
 

@@ -1,6 +1,14 @@
 export const productSelectQuery =
   'SELECT id, name, price, image_url, description, rating FROM products';
 
+export const getAdminProductsQuery = `
+    SELECT 
+        id, name, price, image_url, description, 
+        rating, created_at, last_updated_at, is_deleted
+    FROM products 
+    WHERE user_id = $1 LIMIT $2 OFFSET $3;
+`;
+
 export const getProductDetailsQuery = `
     SELECT id, name, price, image_url, description, rating
     FROM products WHERE products.id = $1;

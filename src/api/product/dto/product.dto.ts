@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsIn,
   IsNotIn,
   IsNumber,
@@ -39,6 +40,20 @@ export class ProductDto {
   @ApiProperty()
   @IsString()
   description: string;
+}
+
+export class AdminProductDto extends ProductDto {
+  @ApiProperty()
+  @IsString()
+  created_at: string;
+
+  @ApiProperty()
+  @IsString()
+  last_updated_at: number;
+
+  @ApiProperty()
+  @IsBoolean()
+  is_deleted: boolean;
 }
 
 export class ProductQueryDto extends PaginationDto {
@@ -120,6 +135,14 @@ export class AllProductsResponseDto extends MessageDto {
   @ValidateNested({ each: true })
   @Type(() => ProductDto)
   products: ProductDto[];
+}
+
+export class AdminProductsResponseDto extends MessageDto {
+  @ApiProperty({ type: [AdminProductDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => AdminProductDto)
+  products: AdminProductDto[];
 }
 
 export class ProductDetailsResponseDto extends MessageDto {

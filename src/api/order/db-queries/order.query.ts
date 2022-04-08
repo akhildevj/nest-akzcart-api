@@ -20,7 +20,8 @@ export const getOrdersQuery = `
     LEFT JOIN cart_items ON cart.id = cart_items.cart_id
     LEFT JOIN products ON cart_items.product_id = products.id
     WHERE orders.user_id = $1
-	GROUP BY orders.id;
+	GROUP BY orders.id
+    LIMIT $2 OFFSET $3;
 `;
 
 export const getOrderByIdQuery = `

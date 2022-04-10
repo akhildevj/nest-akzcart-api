@@ -203,7 +203,7 @@ export class ProductService {
   }
 
   updateProductRating(
-    params: ProductIdDto,
+    params: UserIdDto,
     body: productRatingBodyDto,
   ): Observable<MessageDto | Record<null, null>> {
     const { id } = params;
@@ -265,7 +265,11 @@ export class ProductService {
     return this.databaseService
       .rawQuery(getCategoriesQuery, [], CategoryDto)
       .pipe(
-        map(products => ({ success: true, message: GET_MESSAGE, products })),
+        map(categories => ({
+          success: true,
+          message: GET_MESSAGE,
+          categories,
+        })),
       );
   }
 }

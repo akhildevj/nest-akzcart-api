@@ -13,6 +13,7 @@ import {
   addToCartQuery,
   clearCartQuery,
   getCartQuery,
+  removeFromCartQuery,
 } from './db-queries/cart.query';
 import { CartDto, CartResponseDto, CartBodyDto } from './dto/cart.dto';
 
@@ -34,15 +35,17 @@ export class CartService {
   ): Observable<MessageDto | Record<null, null>> {
     const { id } = params;
     const { productId, quantity } = body;
+    const valueArray = [productId, id];
 
-    return this.databaseService
-      .rawQuery(addToCartQuery, [productId, quantity, id], CartDto)
-      .pipe(
-        map(rows => {
-          if (!rows.length) throw new BadRequestException(INVALID_ID);
-          return { success: true, message: UPDATE_MESSAGE };
-        }),
-      );
+    const query = quantity ? addToCartQuery : removeFromCartQuery;
+    if (quantity) valueArray.push(quantity);
+
+    return this.databaseService.rawQuery(query, valueArray, CartDto).pipe(
+      map(rows => {
+        if (!rows.length) throw new BadRequestException(INVALID_ID);
+        return { success: true, message: UPDATE_MESSAGE };
+      }),
+    );
   }
 
   clearCart(params: UserIdDto): Observable<MessageDto | Record<null, null>> {

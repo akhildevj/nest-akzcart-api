@@ -12,10 +12,17 @@ export const getCartQuery = `
 `;
 
 export const addToCartQuery = `
-   	INSERT INTO cart_items(product_id, quantity, cart_id) 
-    SELECT $1, $2, (SELECT cart_id FROM users WHERE id = $3)
+   	INSERT INTO cart_items(product_id, cart_id, quantity) 
+    SELECT $1, (SELECT cart_id FROM users WHERE id = $2), $3
     ON CONFLICT (cart_id, product_id) DO UPDATE 
     SET quantity = EXCLUDED.quantity
+    RETURNING 1;
+`;
+
+export const removeFromCartQuery = `
+   	DELETE FROM cart_items
+    WHERE product_id = $1
+    AND cart_id = (SELECT cart_id FROM users WHERE id = $2)
     RETURNING 1;
 `;
 

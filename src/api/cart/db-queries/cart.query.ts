@@ -1,5 +1,5 @@
 export const getCartQuery = `
-    SELECT cart_items.id, products.name, products.price,  
+    SELECT cart_items.id, products.id as product_id, products.name, products.price,  
         products.image_url, cart_items.quantity 
     FROM cart_items 
     LEFT JOIN products

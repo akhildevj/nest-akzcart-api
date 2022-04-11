@@ -9,6 +9,10 @@ export class CartDto {
   id: number;
 
   @ApiProperty()
+  @IsNumber()
+  productId: number;
+
+  @ApiProperty()
   @IsString()
   name: string;
 

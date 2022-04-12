@@ -5,8 +5,10 @@ export const getOrdersQuery = `
 	orders.total_price,
 	JSON_AGG(
 		JSON_BUILD_OBJECT(
+            'product_id', products.id,
 			'name', products.name,
             'price', products.price,
+            'image_url', products.image_url,
             'quantity', cart_items.quantity,
 			'rating', (
 				SELECT rating FROM product_ratings 

@@ -196,7 +196,7 @@ export class ProductService {
       .rawQuery(restoreProductQuery, [params.id], ProductDto)
       .pipe(
         map(rows => {
-          if (!rows.length) throw new BadRequestException(INVALID_ID);
+          if (!rows.length) throw new BadRequestException('ivalid id');
           return { success: true, message: RESTORE_MESSAGE };
         }),
       );

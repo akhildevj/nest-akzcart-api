@@ -24,9 +24,11 @@ export class UserService {
   getUser(params: UserIdDto): Observable<MessageDto | Record<null, null>> {
     const { id } = params;
 
-    return this.databaseService
-      .rawQuery(getUserQuery, [id], UserBodyDto)
-      .pipe(map(([user]) => ({ success: true, message: GET_MESSAGE, user })));
+    return this.databaseService.rawQuery(getUserQuery, [id], UserBodyDto).pipe(
+      map(usersArr => {
+        return { success: true, message: GET_MESSAGE, user: usersArr[0] };
+      }),
+    );
   }
 
   signup(body: UserBodyDto): Observable<MessageDto | Record<null, null>> {

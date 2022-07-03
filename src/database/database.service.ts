@@ -50,6 +50,7 @@ export class DatabaseService<T> implements DatabaseInterface<T> {
     );
   }
 
+
   private underScoreToCamelCase(
     record: Record<string, any>,
   ): Record<string, any> {

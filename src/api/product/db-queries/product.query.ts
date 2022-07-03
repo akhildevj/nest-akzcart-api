@@ -32,7 +32,7 @@ export const addProductQuery = `
 export const updateProductQuery = `
     UPDATE products SET
     name = $2, price = $3, category= $4, image_url = $5, description = $6
-    WHERE id = $1 RETURNING 1;
+    WHERE id = $1 RETURNING 1; =>[1]
 `;
 
 export const deleteProductQuery = `

@@ -19,11 +19,8 @@ async function bootstrap() {
       'Akzkart API server is an e-commerce backend API server created using Nest framework.',
     )
     .setVersion('1.0')
+    .addServer('https://akzkart-api.akhildev.in', 'Remote Server')
     .addServer('http://localhost:3000', 'Local Server')
-    .addServer(
-      'https://nest-akzkart-api-production.up.railway.app',
-      'Remote Server',
-    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('', app, document);

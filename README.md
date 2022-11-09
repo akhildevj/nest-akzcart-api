@@ -2,11 +2,11 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>
 
-# Akzkart API Server
+# Akzcart API Server
 
 ## Description
 
-Akzkart API server is an e-commerce backend API server created using [Nest](https://github.com/nestjs/nest) framework.
+Akzcart API server is an e-commerce backend API server created using [Nest](https://github.com/nestjs/nest) framework.
 
 ## Installation
 
